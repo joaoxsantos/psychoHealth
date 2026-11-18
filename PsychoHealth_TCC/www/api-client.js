@@ -1,8 +1,10 @@
 (() => {
+  const nativeApp = Boolean(window.Capacitor?.isNativePlatform?.());
+  const apiBase = nativeApp ? "https://psychohealth-tcc-demo.onrender.com" : "";
   async function request(path, options = {}) {
-    const response = await fetch(path, {
+    const response = await fetch(`${apiBase}${path}`, {
       ...options,
-      credentials: "same-origin",
+      credentials: nativeApp ? "include" : "same-origin",
       headers: { "Content-Type": "application/json", ...(options.headers || {}) }
     });
     const data = await response.json().catch(() => ({}));

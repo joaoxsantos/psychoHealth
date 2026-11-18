@@ -143,7 +143,8 @@ function cookieValue(req, name) {
 }
 function sessionCookie(token, maxAge = Math.floor(sessionLifetime / 1000)) {
   const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
-  return `${cookieName}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`;
+  const sameSite = process.env.NODE_ENV === "production" ? "None" : "Lax";
+  return `${cookieName}=${token}; Path=/; HttpOnly; SameSite=${sameSite}; Max-Age=${maxAge}${secure}`;
 }
 function requestUser(req) {
   const token = cookieValue(req, cookieName);
@@ -164,7 +165,7 @@ function verifySameOrigin(req, res) {
   const origin = req.headers.origin;
   if (!origin) return true;
   try {
-    if (new URL(origin).host === req.headers.host) return true;
+    if (new URL(origin).host === req.headers.host || origin === "https://localhost") return true;
   } catch { /* reject malformed Origin */ }
   fail(res, 403, "Origem da solicitação não permitida.");
   return false;
@@ -230,7 +231,18 @@ const server = http.createServer(async (req,res) => {
   const route = url.pathname;
   try {
     if (!route.startsWith("/api/")) return sendStatic(req,res,route);
-    if (req.method === "OPTIONS") { res.writeHead(204,{"Allow":"GET,POST,PUT,PATCH,DELETE,OPTIONS"}); return res.end(); }
+    const origin = req.headers.origin;
+    if (origin === "https://localhost") {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+      res.setHeader("Vary", "Origin");
+    }
+    if (req.method === "OPTIONS") {
+      if (origin !== "https://localhost") return fail(res,403,"Origem da solicitação não permitida.");
+      res.writeHead(204,{"Allow":"GET,POST,PUT,PATCH,DELETE,OPTIONS"}); return res.end();
+    }
     if (["POST","PUT","PATCH","DELETE"].includes(req.method) && !verifySameOrigin(req,res)) return;
     if (req.method === "GET" && route === "/api/health") return json(res,200,{ok:true,service:"psychohealth-local-api",storage:"sqlite"});
 

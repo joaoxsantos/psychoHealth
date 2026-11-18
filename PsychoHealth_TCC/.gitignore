@@ -46,3 +46,8 @@ google-services.json
 .idea/
 .DS_Store
 Thumbs.db
+
+# Ferramentas locais usadas para compilar o APK
+android/.gradle-home/
+android/.jdk21/
+android/.jdk21.zip

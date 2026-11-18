@@ -119,10 +119,12 @@ if (!location.hash) activateTab("inicio");
 
 /* ---------- Tema e preferências ---------- */
 const settings = JSON.parse(localStorage.getItem("psychoSettings") || "{}");
-// The old reminder switch was only a local preference, not a scheduled notification.
-// Do not show it as active after upgrade until the person opts in to the real reminder.
-if (settings.reminderVersion !== 1) { settings.reminder = false; settings.reminderVersion = 1; localStorage.setItem("psychoSettings", JSON.stringify(settings)); }
-const defaultReminderTimes = { reminderTime: "19:00", quietStart: "22:00", quietEnd: "07:00" };
+// Preserve opt-in reminders while moving existing devices to the fixed 07:00/19:00 schedule.
+if (settings.reminderVersion !== 2) {
+  settings.reminder = settings.reminderVersion === 1 && settings.reminder === true;
+  settings.reminderVersion = 2;
+  localStorage.setItem("psychoSettings", JSON.stringify(settings));
+}
 function uiLocale() { return settings.language === "en" ? "en-US" : settings.language === "es" ? "es-ES" : "pt-BR"; }
 const uiTranslations = {
   en: { "Início":"Home", "Psicólogos":"Psychologists", "Ferramentas":"Tools", "Meu perfil":"My profile", "Configurações":"Settings", "Entrar":"Sign in", "Preferências":"Preferences", "Modo escuro":"Dark mode", "Acessibilidade":"Accessibility", "Texto ampliado":"Larger text", "Alto contraste":"High contrast", "Dados deste protótipo":"Prototype data", "Idioma do aplicativo":"App language", "Lembrete diário de humor":"Daily mood reminder", "Horário diário":"Daily time", "Início do período silencioso":"Quiet hours start", "Fim do período silencioso":"Quiet hours end", "Apagar dados locais":"Delete local data", "SEUS DADOS":"YOUR DATA", "← Voltar ao início":"← Back to home", "Nome ou nome social":"Name or preferred name", "E-mail":"Email", "Idade ou faixa etária":"Age or age range", "Pronomes (opcional)":"Pronouns (optional)", "Idioma preferido":"Preferred language", "Fuso horário":"Time zone", "Salvar alterações":"Save changes", "Sair deste perfil":"Sign out of this profile", "Adicionar foto ou avatar":"Add a photo or avatar", "Remover foto":"Remove photo", "Prefiro não informar":"Prefer not to say", "TECNOLOGIA + CUIDADO HUMANO":"TECHNOLOGY + HUMAN CARE", "Seu bem-estar merece":"Your well-being deserves", "atenção todos os dias.":"daily attention.", "Entrar ou criar perfil":"Sign in or create a profile", "Conhecer profissionais":"Meet professionals", "✓ Privacidade local":"✓ Local privacy", "✓ Interface acessível":"✓ Accessible interface", "✓ Foco no bem-estar":"✓ Well-being focused", "Como você está hoje?":"How are you feeling today?", "Salvar check-in de hoje":"Save today's check-in", "Psicólogos perto de mim":"Psychologists near me", "Preparando seu espaço de cuidado...":"Preparing your care space...", "Criar perfil":"Create profile", "Já tenho perfil":"I already have a profile", "Entre ou crie seu perfil":"Sign in or create your profile", "Para continuar, cadastre um perfil neste aparelho ou acesse o perfil local já salvo.":"To continue, create a profile on this device or access your saved local profile.", "Criar perfil e continuar":"Create profile and continue", "Acessar perfil local":"Access local profile", "Nome":"Name", "PsychoHealth | Cuidado que conecta":"PsychoHealth | Care that connects", "Altera o idioma da navegação e das configurações principais.":"Changes the language of navigation and main settings.", "Deixe o PsychoHealth do seu jeito.":"Make PsychoHealth yours.", "Perfil, diário, humor, check-ins, autocuidado e metas usam":"Profile, diary, mood, check-ins, self-care, and goals use", ". Os dados ficam apenas neste navegador e não sincronizam entre aparelhos. O perfil local não é uma conta autenticada.":". Data stays in this browser and is not synced between devices. A local profile is not an authenticated account.", "A notificação é local e usa o horário deste celular. Se o horário escolhido cair no período silencioso, ela será enviada ao final desse período. Disponível no app Android.":"This is a local notification using this phone's time. If the selected time falls within quiet hours, it will be sent when quiet hours end. Available in the Android app." },
@@ -179,17 +181,12 @@ function saveSettings() { localStorage.setItem("psychoSettings", JSON.stringify(
 function applySettings() {
   document.body.classList.toggle("dark", !!settings.dark);
   document.body.classList.toggle("high-contrast", !!settings.contrast);
-  document.body.classList.toggle("reduce-motion", !!settings.reduceMotion);
   document.documentElement.style.setProperty("--font-scale", settings.font ? "1.12" : "1");
 
   $("#darkToggle").checked = !!settings.dark;
   $("#reminderToggle").checked = !!settings.reminder;
   $("#fontToggle").checked = !!settings.font;
   $("#contrastToggle").checked = !!settings.contrast;
-  $("#motionToggle").checked = !!settings.reduceMotion;
-  $("#reminderTime").value = settings.reminderTime || defaultReminderTimes.reminderTime;
-  $("#quietStart").value = settings.quietStart || defaultReminderTimes.quietStart;
-  $("#quietEnd").value = settings.quietEnd || defaultReminderTimes.quietEnd;
   $("#appLanguage").value = settings.language || "pt-BR";
   $$(".brand-symbol, .loader-logo-image").forEach(image => {
     image.src = settings.dark ? "assets/logo_darktheme-removebg-preview.png" : "assets/logo_lighttheme-removebg-preview.png";
@@ -210,7 +207,7 @@ $("#authThemeBtn").addEventListener("click", toggleTheme);
 
 [
   ["darkToggle", "dark"],
-  ["fontToggle", "font"], ["contrastToggle", "contrast"], ["motionToggle", "reduceMotion"]
+  ["fontToggle", "font"], ["contrastToggle", "contrast"]
 ].forEach(([id, key]) => {
   $("#" + id).addEventListener("change", e => {
     settings[key] = e.target.checked;
@@ -235,24 +232,15 @@ $("#togglePasswordSection").addEventListener("click", event => {
   const form=$("#passwordForm"), button=event.currentTarget;
   form.hidden=!form.hidden;
   button.setAttribute("aria-expanded",String(!form.hidden));
-  if(!form.hidden) { $("#currentPassword").focus(); form.scrollIntoView({block:"nearest",behavior:settings.reduceMotion?"auto":"smooth"}); }
+  if(!form.hidden) { $("#currentPassword").focus(); form.scrollIntoView({block:"nearest",behavior:"smooth"}); }
 });
 
 $("#appLanguage").addEventListener("change", e => { settings.language = e.target.value; saveSettings(); applyLanguage(); refreshProfileLanguageText(); window.dispatchEvent(new Event("psychohealth:languagechange")); });
 
-const CHECKIN_NOTIFICATION_ID = 741201;
+const CHECKIN_NOTIFICATION_IDS = [741201, 741202];
 function reminderPlugin() { return window.Capacitor?.Plugins?.LocalNotifications; }
-function timeMinutes(value) { const [hour, minute] = (value || "").split(":").map(Number); return Number.isFinite(hour) && Number.isFinite(minute) ? hour * 60 + minute : null; }
-function effectiveReminderTime() {
-  const chosen = settings.reminderTime || defaultReminderTimes.reminderTime;
-  const target = timeMinutes(chosen), start = timeMinutes(settings.quietStart || defaultReminderTimes.quietStart), end = timeMinutes(settings.quietEnd || defaultReminderTimes.quietEnd);
-  if (target === null || start === null || end === null || start === end) return chosen;
-  const silent = start < end ? target >= start && target < end : target >= start || target < end;
-  return silent ? (settings.quietEnd || defaultReminderTimes.quietEnd) : chosen;
-}
-function nextReminderDate() {
-  const [hour, minute] = effectiveReminderTime().split(":").map(Number);
-  const date = new Date(); date.setHours(hour, minute, 0, 0);
+function nextReminderDate(hour) {
+  const date = new Date(); date.setHours(hour, 0, 0, 0);
   if (date <= new Date()) date.setDate(date.getDate() + 1);
   return date;
 }
@@ -262,18 +250,21 @@ async function scheduleMoodReminder() {
   let permission = await plugin.checkPermissions();
   if (permission.display !== "granted") permission = await plugin.requestPermissions();
   if (permission.display !== "granted") throw new Error("notification-permission-denied");
-  await plugin.cancel({ notifications: [{ id: CHECKIN_NOTIFICATION_ID }] });
+  await plugin.cancel({ notifications: CHECKIN_NOTIFICATION_IDS.map(id => ({ id })) });
   const language = settings.language;
-  await plugin.schedule({ notifications: [{
-    id: CHECKIN_NOTIFICATION_ID,
-    title: language === "en" ? "PsychoHealth · Daily check-in" : language === "es" ? "PsychoHealth · Registro diario" : "PsychoHealth · Check-in diário",
-    body: language === "en" ? "Take a moment to record how you are feeling today." : language === "es" ? "Tómate un momento para registrar cómo te sientes hoy." : "Reserve um momento para registrar como você está se sentindo hoje.",
-    schedule: { at: nextReminderDate(), repeats: true, allowWhileIdle: false },
+  const title = language === "en" ? "PsychoHealth · Daily check-in" : language === "es" ? "PsychoHealth · Registro diario" : "PsychoHealth · Check-in diário";
+  const body = language === "en" ? "Take a moment to record how you are feeling today." : language === "es" ? "Tómate un momento para registrar cómo te sientes hoy." : "Reserve um momento para registrar como você está se sentindo hoje.";
+  await plugin.schedule({ notifications: [7, 19].map((hour, index) => ({
+    id: CHECKIN_NOTIFICATION_IDS[index], title, body,
+    schedule: { at: nextReminderDate(hour), repeats: true, allowWhileIdle: true },
     isExactNotification: false
-  }] });
+  })) });
 }
 async function cancelMoodReminder() {
-  await reminderPlugin()?.cancel({ notifications: [{ id: CHECKIN_NOTIFICATION_ID }] });
+  await reminderPlugin()?.cancel({ notifications: CHECKIN_NOTIFICATION_IDS.map(id => ({ id })) });
+}
+if (settings.reminder && reminderPlugin()) {
+  scheduleMoodReminder().catch(error => console.warn("Falha ao atualizar os horários fixos do lembrete:", error));
 }
 $("#reminderToggle").addEventListener("change", async event => {
   if (!event.target.checked) {
@@ -293,16 +284,6 @@ $("#reminderToggle").addEventListener("change", async event => {
     toast(message);
   }
 });
-for (const id of ["reminderTime", "quietStart", "quietEnd"]) {
-  $("#" + id).addEventListener("change", async event => {
-    settings[id] = event.target.value; saveSettings();
-    if (settings.reminder) {
-      try { await scheduleMoodReminder(); }
-      catch (error) { settings.reminder = false; $("#reminderToggle").checked = false; saveSettings(); toast("Não foi possível atualizar o lembrete. Verifique a permissão de notificações."); }
-    }
-  });
-}
-
 /* ---------- Modal ---------- */
 const overlay = $("#modalOverlay");
 function openModal(title, body, icon = "Ψ") {

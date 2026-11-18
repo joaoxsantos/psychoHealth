@@ -34,28 +34,16 @@ Google Meet ainda não cria chamadas automaticamente; isso depende de projeto Go
 
 ## APK e uso em outros aparelhos
 
-O APK atual não tem como alcançar este servidor local de desenvolvimento. Para usar o backend no Android ou em vários dispositivos, hospede a API com HTTPS, configure a URL-base no cliente Capacitor e gere um novo APK. Não instale este modo local como serviço público.
+O cliente Capacitor usa a API hospedada em `https://psychohealth-tcc-demo.onrender.com` no Android. O app habilita cookies de sessão para a origem nativa `https://localhost`; o servidor limita CORS a essa origem. O navegador continua usando a API de mesma origem. Recompile o APK após alterações na interface ou nessa URL.
 
 ## Preparação de hospedagem de teste (Render)
 
-O arquivo `render.yaml` descreve um serviço Node.js com verificação em `/api/health` e disco persistente para o banco SQLite. Ele usa o plano `starter`, pois o armazenamento em disco persistente não está disponível no plano gratuito do Render. A criação do serviço pode gerar cobrança na conta; revise o plano e os valores exibidos no painel antes de confirmar.
+O arquivo `render.yaml` descreve um serviço Node.js no plano gratuito, com verificação em `/api/health`. Como o plano gratuito não oferece disco persistente, o SQLite fica em armazenamento temporário: os dados podem sumir quando o serviço reinicia, é publicado de novo ou hiberna. O serviço também pode levar cerca de um minuto para responder quando acorda. Use somente dados fictícios e descartáveis nesta configuração.
 
-Para publicar, coloque esta pasta do projeto em um repositório Git privado, sem incluir `backend/data`, `.env`, APKs ou segredos; conecte o repositório ao Render e crie o serviço usando o Blueprint `render.yaml`. Quando o deploy terminar, teste a URL HTTPS acrescentando `/api/health`. O site e a API serão servidos pelo mesmo domínio. O APK ainda requer configuração de URL e autenticação para chamar esse domínio com segurança; este manifesto não resolve essa etapa móvel.
+O serviço de teste está em `https://psychohealth-tcc-demo.onrender.com`. Após atualizar o código no GitHub, publique o novo commit no Render e teste a URL HTTPS acrescentando `/api/health`. Não inclua `backend/data`, `.env`, APKs ou segredos no Git.
 
-Esta configuração é apenas para demonstração controlada. Antes de armazenar dados reais, é necessário revisar proteção/backup do SQLite, política de privacidade e LGPD, recuperação de conta e controles operacionais.
+Esta configuração é apenas para demonstração controlada com dados descartáveis. Não armazene dados reais de saúde nela. Antes de qualquer uso real, é necessário migrar para armazenamento persistente e revisar proteção/backup, política de privacidade e LGPD, recuperação de conta e controles operacionais.
 
 ## Dados
 
 O banco está em `backend/data/psychohealth.sqlite` e é ignorado pelo Git. Faça backup protegido antes de atualizações. Remover esse arquivo apaga as contas e registros persistidos no servidor.
-
-## Configuração local e proteção de segredos
-
-1. Copie `.env.example` para um arquivo chamado `.env`.
-2. Troque `ADMIN_API_KEY` por uma chave longa e aleatória. Não compartilhe esse valor.
-3. Execute `npm start`. O comando carrega as variáveis do `.env` automaticamente no Node.js 22.13+.
-4. No Render ou em outro serviço de hospedagem, cadastre `ADMIN_API_KEY` nas configurações de variáveis de ambiente do serviço. Não envie o `.env` ao repositório.
-
-O `.env.example` contém apenas nomes e valores de exemplo. O `.gitignore` impede o envio do `.env`, do banco SQLite, de arquivos de assinatura Android e de arquivos gerados.
-
-Antes de enviar ao GitHub, confira com `git status`. Se algum segredo já tiver sido enviado anteriormente, remova/revogue a chave no serviço que a emitiu; apagar o arquivo em um commit novo não apaga o histórico.
-

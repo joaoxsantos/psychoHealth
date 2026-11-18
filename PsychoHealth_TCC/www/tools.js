@@ -326,9 +326,10 @@
   }
   $("#goalForm").addEventListener("submit", async event => {
     event.preventDefault();
+    const form = event.currentTarget;
     const title = $("#goalTitle").value.trim();
     if (!title) return;
-    const editingId = event.currentTarget.dataset.editing;
+    const editingId = form.dataset.editing;
     const goal = {
       id: editingId || (window.crypto?.randomUUID?.() || String(Date.now())),
       title,
@@ -339,8 +340,8 @@
     goals = editingId ? goals.map(item => item.id === editingId ? goal : item) : [goal, ...goals];
     storage.write(goalsKey, goals);
     try { await PsychoAPI.post("/api/goals", goal); } catch(error) { toast(`Falha ao salvar: ${error.message}`); }
-    delete event.currentTarget.dataset.editing;
-    event.currentTarget.reset();
+    delete form.dataset.editing;
+    form.reset();
     $("#goalForm button[type=submit]").textContent = "Adicionar meta";
     renderGoals();
     if (window.toast) toast(editingId ? "Meta atualizada." : "Meta salva neste dispositivo.");
