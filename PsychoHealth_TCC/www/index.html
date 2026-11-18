@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PsychoHealth — plataforma acadêmica de bem-estar e acompanhamento emocional.">
+  <title>PsychoHealth | Cuidado que conecta</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Tela de carregamento inicial -->
+  <div id="loader" class="loader-screen" aria-label="Carregando PsychoHealth">
+    <img class="loader-logo-image" src="assets/logo_lighttheme-removebg-preview.png" alt="PsychoHealth">
+    <div class="loader-ball"></div>
+    <p>Preparando seu espaço de cuidado...</p>
+  </div>
+
+  <section id="authGate" class="auth-gate" aria-labelledby="authTitle" hidden>
+    <div class="auth-panel">
+      <img class="auth-logo" src="assets/logo_lighttheme-removebg-preview.png" alt="">
+      <span class="eyebrow">SEU ESPAÇO PSYCHOHEALTH</span>
+      <h1 id="authTitle">Entre ou crie seu perfil</h1>
+      <p>Crie uma conta ou entre. Seus dados serão armazenados neste servidor local.</p>
+      <button id="authThemeBtn" class="auth-theme-btn icon-btn" type="button" aria-label="Alternar tema">◐ Tema</button>
+      <div class="auth-switch" role="group" aria-label="Escolha uma opção">
+        <button id="showSignup" class="secondary-btn" type="button" aria-pressed="true">Criar perfil</button>
+        <button id="showSignin" class="secondary-btn" type="button" aria-pressed="false">Já tenho perfil</button>
+      </div>
+      <form id="signupForm" class="auth-form">
+        <label for="signupName">Nome</label>
+        <input id="signupName" name="name" autocomplete="name" maxlength="80" required placeholder="Como gostaria de ser chamado(a)?">
+        <label for="signupEmail">E-mail</label>
+        <input id="signupEmail" name="email" type="email" autocomplete="email" maxlength="120" required placeholder="voce@email.com">
+        <label for="signupPassword">Senha (mínimo de 10 caracteres)</label>
+        <input id="signupPassword" name="password" type="password" autocomplete="new-password" minlength="10" maxlength="200" required>
+        <button class="primary-btn" type="submit">Criar perfil e continuar</button>
+      </form>
+      <form id="signinForm" class="auth-form" hidden>
+        <label for="signinEmail">E-mail</label>
+        <input id="signinEmail" name="email" type="email" autocomplete="email" required placeholder="voce@email.com">
+        <label for="signinPassword">Senha</label>
+        <input id="signinPassword" name="password" type="password" autocomplete="current-password" required>
+        <button class="primary-btn" type="submit">Entrar</button>
+      </form>
+      <p id="authMessage" class="auth-message" role="status" aria-live="polite"></p>
+      <p class="privacy-note">Conta de demonstração armazenada no banco local deste servidor. Não use uma senha que você utiliza em outros serviços.</p>
+    </div>
+  </section>
+
+  <!-- Cabeçalho fixo com a logo presente em todas as telas -->
+  <header class="topbar">
+    <a href="#inicio" class="brand" aria-label="PsychoHealth - início">
+      <img class="brand-symbol" src="assets/logo_lighttheme-removebg-preview.png" alt="">
+      <span>Psycho<span>Health</span></span>
+    </a>
+
+
+    <button id="themeBtn" class="icon-btn" aria-label="Alternar tema">◐</button>
+    <button id="loginBtn" class="login-btn">Entrar</button>
+  </header>
+
+  <nav id="mainNav" class="nav" aria-label="Navegação principal" role="tablist">
+      <a href="#inicio" id="tab-inicio" role="tab" aria-label="Início" title="Início" aria-controls="pagina-inicio" aria-selected="true" data-tab="inicio"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span class="sr-only">Início</span></a>
+      <a href="#psicologos" id="tab-psicologos" role="tab" aria-label="Psicólogos" title="Psicólogos" aria-controls="pagina-psicologos" aria-selected="false" data-tab="psicologos"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4.5a4 4 0 0 1 0 7.5M18 15a5 5 0 0 1 4 5v1"/></svg><span class="sr-only">Psicólogos</span></a>
+      <a href="#ferramentas" id="tab-ferramentas" role="tab" aria-label="Ferramentas" title="Ferramentas" aria-controls="pagina-ferramentas" aria-selected="false" data-tab="ferramentas"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="sr-only">Ferramentas</span></a>
+      <a href="#perfil" id="tab-perfil" role="tab" aria-label="Meu perfil" title="Meu perfil" aria-controls="pagina-perfil" aria-selected="false" data-tab="perfil"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="sr-only">Meu perfil</span></a>
+      <a href="#configuracoes" id="tab-configuracoes" role="tab" aria-label="Configurações" title="Configurações" aria-controls="pagina-configuracoes" aria-selected="false" data-tab="configuracoes"><svg class="nav-icon settings-gear-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13.5a7.8 7.8 0 0 0 0-3l1.8-1.4-1.8-3.2-2.2.7a7.5 7.5 0 0 0-2.6-1.5L14.2 3h-4.4l-.4 2.1a7.5 7.5 0 0 0-2.6 1.5l-2.2-.7-1.8 3.2 1.8 1.4a7.8 7.8 0 0 0 0 3l-1.8 1.4 1.8 3.2 2.2-.7a7.5 7.5 0 0 0 2.6 1.5l.4 2.1h4.4l.4-2.1a7.5 7.5 0 0 0 2.6-1.5l2.2.7 1.8-3.2z"/><circle cx="12" cy="12" r="3"/></svg><span class="sr-only">Configurações</span></a>
+    </nav>
+
+  <main id="conteudo-principal">
+    <div id="pagina-inicio" class="tab-page" role="tabpanel" aria-labelledby="tab-inicio" data-page="inicio" tabindex="0">
+    <!-- HERO -->
+    <section id="inicio" class="hero home-dashboard section">
+      <div class="hero-content home-welcome reveal">
+        <span class="eyebrow">SEU ESPAÇO PESSOAL</span>
+        <h1>Seu cuidado começa <span>no seu tempo.</span></h1>
+        <p>Acompanhe seu humor, organize seus pensamentos e escolha uma ferramenta para hoje.</p>
+        <div class="hero-actions">
+          <button id="heroAuthBtn" class="primary-btn" type="button">Entrar ou criar perfil <span aria-hidden="true">→</span></button>
+          <a class="secondary-btn" href="#psicologos">Conhecer terapeutas <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+      <div class="hero-card home-checkin-card reveal delay-1">
+        <div class="mood-card">
+          <div class="mood-head">
+            <span><small>CHECK-IN RÁPIDO</small><strong>Como você está hoje?</strong><em>Escolha a opção que combina com seu momento.</em></span>
+            <span class="mood-head-icon" aria-hidden="true">♡</span>
+          </div>
+          <div class="moods">
+            <button data-mood="Muito bem" aria-label="Registrar humor: muito bem"><span aria-hidden="true">😄</span><b>Muito bem</b></button>
+            <button data-mood="Bem" aria-label="Registrar humor: bem"><span aria-hidden="true">🙂</span><b>Bem</b></button>
+            <button data-mood="Neutro" aria-label="Registrar humor: neutro"><span aria-hidden="true">😐</span><b>Neutro</b></button>
+            <button data-mood="Triste" aria-label="Registrar humor: triste"><span aria-hidden="true">😔</span><b>Triste</b></button>
+            <button data-mood="Ansioso ou estressado" aria-label="Registrar humor: ansioso ou estressado"><span aria-hidden="true">😟</span><b>Ansioso</b></button>
+          </div>
+          <small id="heroMoodText" aria-live="polite">Toque em uma opção para registrar seu humor.</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFÍCIOS -->
+    <section class="section soft home-shortcuts-section">
+      <div class="section-heading">
+        <span class="eyebrow">ATALHOS</span>
+        <h2>O que você precisa hoje?</h2>
+      </div>
+      <div class="feature-grid home-shortcuts">
+        <a class="feature-card" href="#diario" data-open-tool="diario">
+          <div class="feature-icon">♡</div>
+          <div><h3>Diário pessoal</h3><p>Escreva no seu ritmo</p></div><span class="shortcut-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="feature-card" href="#checkin" data-open-tool="checkin">
+          <div class="feature-icon">◔</div>
+          <div><h3>Registro de humor</h3><p>Observe como você está</p></div><span class="shortcut-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="feature-card" href="#psicologos">
+          <div class="feature-icon">Ψ</div>
+          <div><h3>Rede profissional</h3><p>Encontre apoio profissional</p></div><span class="shortcut-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="feature-card" href="#configuracoes">
+          <div class="feature-icon">⚙</div>
+          <div><h3>Preferências</h3><p>Ajuste o app para você</p></div><span class="shortcut-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- AVALIAÇÕES -->
+    <details class="home-reviews">
+      <summary>Sobre o projeto e avaliações</summary>
+      <section id="avaliacoes" class="section">
+      <div class="section-heading"><span class="eyebrow">AVALIAÇÕES</span><h2>Experiências diferentes, opiniões reais</h2><p>Avaliações de demonstração para a apresentação; não são relatos enviados por usuários.</p></div>
+      <div class="reviews-grid">
+        <article class="review-card positive"><span class="stars">★★★★★</span><p>“A interface é simples e gostei de acompanhar minhas respostas sem complicação.”</p><strong>— Marina, 22</strong></article>
+        <article class="review-card positive"><span class="stars">★★★★☆</span><p>“O diário é uma ideia interessante e o modo escuro ajuda bastante à noite.”</p><strong>— Lucas, 25</strong></article>
+        <article class="review-card negative"><span class="stars">★★☆☆☆</span><p>“Senti falta de mais opções de personalização e alguns textos poderiam ser mais claros.”</p><strong>— Camila, 21</strong></article>
+        <article class="review-card negative"><span class="stars">★★★☆☆</span><p>“Gostei da proposta, mas achei que algumas telas tinham informação demais.”</p><strong>— André, 28</strong></article>
+      </div>
+      <button id="reviewBtn" class="secondary-btn centered">Escrever avaliação</button>
+      </section>
+    </details>
+
+    <!-- PSICÓLOGOS -->
+    </div>
+
+    <div id="pagina-perfil" class="tab-page" role="tabpanel" aria-labelledby="tab-perfil" data-page="perfil" tabindex="0" hidden>
+      <section id="perfil" class="section soft">
+        <button class="secondary-btn tool-back" id="profileBack" type="button">← Voltar ao início</button>
+        <div class="section-heading"><span class="eyebrow">SEUS DADOS</span><h2>Meu perfil</h2><p id="profileGreeting">Edite os dados deste perfil local. As alterações ficam apenas neste aparelho.</p></div>
+        <div class="profile-hub">
+          <form id="profileForm" class="profile-form">
+            <div class="avatar-editor"><img id="profileAvatarPreview" alt="Avatar do perfil" hidden><span id="profileAvatarInitials" aria-hidden="true">PH</span><label class="secondary-btn" for="profileAvatarFile">Adicionar foto ou avatar</label><input id="profileAvatarFile" type="file" accept="image/png,image/jpeg,image/webp" hidden><button id="removeProfileAvatar" class="text-btn" type="button" hidden>Remover foto</button></div>
+            <label for="profileName">Nome ou nome social</label><input id="profileName" name="name" autocomplete="name" maxlength="80" required>
+            <label for="profileEmail">E-mail da conta</label><input id="profileEmail" name="email" type="email" autocomplete="email" maxlength="120" readonly>
+            <label for="profileAge">Idade ou faixa etária</label><select id="profileAge"><option value="">Prefiro não informar</option><option>13–17</option><option>18–24</option><option>25–34</option><option>35–44</option><option>45–59</option><option>60+</option></select>
+            <label for="profilePronouns">Pronomes (opcional)</label><input id="profilePronouns" maxlength="40" placeholder="Ex.: ela/dela">
+            <label for="profileLanguage">Idioma preferido</label><select id="profileLanguage"><option value="pt-BR">Português (Brasil)</option><option value="en">English</option><option value="es">Español</option></select>
+            <label for="profileTimezone">Fuso horário</label><select id="profileTimezone"><option value="America/Sao_Paulo">Brasília (America/Sao_Paulo)</option><option value="America/Manaus">Manaus (America/Manaus)</option><option value="America/Rio_Branco">Rio Branco (America/Rio_Branco)</option><option value="America/Noronha">Fernando de Noronha (America/Noronha)</option><option value="UTC">UTC</option></select>
+            <p id="profileCreatedAt" class="privacy-note"></p>
+            <p class="privacy-note">O perfil e seus registros são armazenados no banco SQLite deste servidor local. O e-mail da conta não pode ser alterado nesta tela.</p>
+            <div class="profile-actions"><button class="primary-btn" type="submit">Salvar alterações</button><button id="togglePasswordSection" class="outline-btn" type="button" aria-expanded="false" aria-controls="passwordForm">Alterar senha</button><button id="logoutBtn" class="danger-btn" type="button">Sair deste perfil</button></div>
+          </form>
+          <form id="passwordForm" class="password-form settings-card" hidden>
+            <h3>Segurança da conta</h3><p>Para trocar a senha, confirme a senha atual e escolha uma nova com pelo menos 10 caracteres.</p>
+            <label for="currentPassword">Senha atual</label><input id="currentPassword" type="password" autocomplete="current-password" minlength="10" maxlength="200" required>
+            <label for="newPassword">Nova senha</label><input id="newPassword" type="password" autocomplete="new-password" minlength="10" maxlength="200" required>
+            <label for="confirmNewPassword">Confirme a nova senha</label><input id="confirmNewPassword" type="password" autocomplete="new-password" minlength="10" maxlength="200" required>
+            <button class="primary-btn" type="submit">Alterar senha</button><p id="passwordMessage" class="privacy-note" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </div>
+    <div id="pagina-psicologos" class="tab-page" role="tabpanel" aria-labelledby="tab-psicologos" data-page="psicologos" tabindex="0" hidden>
+    <section id="psicologos" class="section soft">
+      <div class="section-heading">
+        <span class="eyebrow">REDE PROFISSIONAL</span>
+        <h2>Conheça nossos psicólogos</h2>
+        <p>Os perfis reais passam por verificação. Os cartões de apresentação abaixo são fictícios e não correspondem a atendimentos reais.</p>
+      </div>
+      <div id="professionalDirectory" class="professionals-grid" aria-live="polite"><p class="empty">Carregando profissionais verificados…</p></div>
+      <div class="sample-directory-heading"><h3>Psicólogos para apresentação</h3><p>Perfis demonstrativos; as informações e conversas não representam atendimento real.</p></div>
+      <div id="sampleProfessionalDirectory" class="professionals-grid" aria-label="Perfis demonstrativos"></div>
+      <div id="professionalInbox" hidden><section class="entries-box"><h3>Solicitações de horário</h3><div id="professionalAppointmentInbox" class="entries-list"></div></section><section class="entries-box"><h3>Conversas</h3><div id="professionalChatInbox" class="entries-list"></div></section></div>
+      <div class="nearby-card">
+        <div><h3>Psicólogos perto de mim</h3><p>Use sua localização para procurar profissionais no Google Maps. Sua posição só será compartilhada com o Maps após a autorização do aparelho.</p></div>
+        <button id="nearbyPsychologists" class="primary-btn" type="button">Buscar perto de mim</button>
+      </div>
+      <div class="nearby-card"><div><h3>Você é psicólogo(a)?</h3><p>Cadastre seu perfil profissional para análise. Ele só aparecerá para usuários após verificação administrativa do registro.</p></div><button id="professionalApply" class="outline-btn" type="button">Solicitar cadastro profissional</button></div>
+    </section>
+
+    </div>
+    <div id="pagina-ferramentas" class="tab-page" role="tabpanel" aria-labelledby="tab-ferramentas" data-page="ferramentas" tabindex="0" hidden>
+    <!-- FERRAMENTAS -->
+    <section id="ferramentas" class="section soft tools-overview" aria-labelledby="toolsTitle">
+      <div class="section-heading">
+        <span class="eyebrow">MEU PERFIL · ESPAÇO PESSOAL</span>
+        <h2 id="toolsTitle">Ferramentas para cuidar de você.</h2>
+        <p>Escolha o que faz sentido para hoje. Seus registros da conta são gravados no banco local do servidor.</p>
+      </div>
+      <div class="tools-grid">
+        <a class="tool-card" href="#diario" data-open-tool="diario"><span class="tool-icon" aria-hidden="true">✎</span><span><b>Diário pessoal</b><small>Escreva, pesquise e revisite seus registros.</small></span><span aria-hidden="true">→</span></a>
+        <a class="tool-card" href="#checkin" data-open-tool="checkin"><span class="tool-icon" aria-hidden="true">◔</span><span><b>Check-in e registro de humor</b><small>Registre como está e acompanhe seus sentimentos.</small></span><span aria-hidden="true">→</span></a>
+        <a class="tool-card" href="#autocuidado" data-open-tool="autocuidado"><span class="tool-icon" aria-hidden="true">♡</span><span><b>Autocuidado</b><small>Escolha pequenas atividades para o seu dia.</small></span><span aria-hidden="true">→</span></a>
+        <a class="tool-card" href="#respiracao" data-open-tool="respiracao"><span class="tool-icon" aria-hidden="true">◯</span><span><b>Respiração guiada</b><small>Siga um ritmo confortável, no seu tempo.</small></span><span aria-hidden="true">→</span></a>
+        <a class="tool-card" href="#metas" data-open-tool="metas"><span class="tool-icon" aria-hidden="true">✓</span><span><b>Metas pessoais</b><small>Organize objetivos pequenos e opcionais.</small></span><span aria-hidden="true">→</span></a>
+        <a class="tool-card" href="#agenda" data-open-tool="agenda"><span class="tool-icon" aria-hidden="true">▦</span><span><b>Agenda e solicitações</b><small>Organize lembretes ou acompanhe pedidos de horário.</small></span><span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <!-- DIÁRIO -->
+    <section id="diario" class="section soft tool-view" data-tool-view="diario" aria-labelledby="diaryHeading" hidden>
+      <button class="secondary-btn tool-back" type="button" data-back-tools>← Voltar para ferramentas</button>
+      <div class="section-heading">
+        <span class="eyebrow">DIÁRIO VIRTUAL</span>
+        <h2 id="diaryHeading">Coloque seus pensamentos no papel.</h2>
+        <p>As anotações da conta são salvas no servidor local. Não use este diário para situações de emergência.</p>
+      </div>
+      <div class="diary-layout diary-layout-polished">
+        <form id="diaryForm" class="diary-box">
+          <div class="diary-form-intro"><span class="diary-sparkle" aria-hidden="true">✦</span><div><span class="eyebrow">ESCRITA LIVRE</span><h3>Um espaço só seu</h3><p>Não precisa encontrar as palavras perfeitas. Comece por onde estiver.</p></div></div>
+          <label for="diaryTitle">Título</label>
+          <input id="diaryTitle" maxlength="80" required placeholder="Ex.: Como foi meu dia">
+          <label for="diaryText">O que você gostaria de registrar?</label>
+          <textarea id="diaryText" maxlength="3000" rows="8" placeholder="Escreva livremente..."></textarea>
+          <div class="form-row"><span id="charCount">0/3000</span><button class="primary-btn" type="submit">Salvar registro</button></div>
+        </form>
+        <div class="entries-box diary-entries-box">
+          <div class="entries-head"><h3>Meus registros</h3><button id="clearDiary" class="text-btn">Limpar</button></div>
+          <div id="entriesList" class="entries-list"><p class="empty">Nenhum registro salvo ainda.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AGENDA DEMONSTRATIVA -->
+    <section id="agenda" class="section soft tool-view" data-tool-view="agenda" aria-labelledby="agendaTitle" hidden>
+      <button class="secondary-btn tool-back" type="button" data-back-tools>← Voltar para ferramentas</button>
+      <div class="section-heading"><span class="eyebrow">ORGANIZAÇÃO PESSOAL</span><h2 id="agendaTitle">Agenda de consultas</h2><p>Os lembretes e solicitações ficam salvos na sua conta. Uma solicitação só vira consulta após a confirmação do profissional.</p></div>
+      <div class="agenda-layout">
+        <section class="calendar-card" aria-label="Calendário mensal">
+          <div class="calendar-toolbar"><button id="calendarPrev" class="secondary-btn" type="button" aria-label="Mês anterior">‹</button><h3 id="calendarMonth" aria-live="polite"></h3><button id="calendarNext" class="secondary-btn" type="button" aria-label="Próximo mês">›</button><button id="calendarToday" class="text-btn" type="button">Hoje</button></div>
+          <div class="calendar-weekdays" aria-hidden="true"><span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span></div>
+          <div id="calendarGrid" class="calendar-grid" role="group" aria-label="Dias do mês"></div>
+          <p id="calendarSelectedDate" class="calendar-selected-date" aria-live="polite"></p>
+          <div id="calendarDayEvents" class="calendar-day-events" aria-live="polite"></div>
+        </section>
+        <form id="appointmentForm" class="diary-box appointment-form">
+          <h3 id="appointmentFormTitle">Adicionar à agenda</h3><p class="privacy-note">Sem profissional verificado, este item é apenas um lembrete pessoal. Uma solicitação a profissional verificado fica pendente até ele confirmar.</p>
+          <input id="appointmentId" type="hidden">
+          <label for="appointmentPsychologist">Profissional ou tipo de lembrete</label><select id="appointmentPsychologist" required><option value="">Selecione</option><option value="Lembrete pessoal">Lembrete pessoal</option><option value="sample:ana">Ana Martins</option><option value="sample:rafael">Rafael Costa</option><option value="sample:larissa">Larissa Souza</option></select>
+          <label for="appointmentDate">Data</label><input id="appointmentDate" type="date" required>
+          <label for="appointmentTime">Horário</label><input id="appointmentTime" type="time" required>
+          <label for="appointmentDuration">Duração</label><select id="appointmentDuration"><option value="30">30 minutos</option><option value="45" selected>45 minutos</option><option value="60">1 hora</option></select>
+          <label for="appointmentMode">Modalidade</label><select id="appointmentMode"><option>Online</option><option>Presencial</option></select>
+          <label for="appointmentNote">Observação (opcional)</label><textarea id="appointmentNote" rows="3" maxlength="300" placeholder="Adicione uma nota para você"></textarea>
+          <div class="appointment-form-actions"><button id="saveAppointment" class="primary-btn" type="submit">Salvar na agenda</button><button id="cancelAppointmentEdit" class="secondary-btn" type="button" hidden>Cancelar edição</button><button id="clearAppointmentForm" class="text-btn" type="button">Limpar</button></div>
+        </form>
+      </div>
+      <section class="entries-box agenda-upcoming"><div class="entries-head"><h3>Próximas consultas</h3><span id="appointmentCount" class="privacy-note"></span></div><div id="appointmentUpcoming" class="appointment-upcoming" aria-live="polite"></div></section>
+    </section>
+
+    <!-- HUMOR -->
+    <section id="checkin" class="section tool-view" data-tool-view="checkin" aria-labelledby="moodTitle" hidden>
+      <button class="secondary-btn tool-back" type="button" data-back-tools>← Voltar para ferramentas</button>
+      <div class="section-heading"><span class="eyebrow">REGISTRO DE HUMOR</span><h2 id="moodTitle">Como você está se sentindo?</h2><p>Um momento para perceber como você está. Seus registros ajudam a observar padrões ao longo do tempo; não são um diagnóstico.</p></div>
+      <div class="mood-tool-layout">
+        <form id="moodForm" class="checkin-card">
+          <div class="mood-form-top"><span class="mood-today-icon" aria-hidden="true">☀</span><div><strong>Seu momento de hoje</strong><small>Leva menos de um minuto</small></div><time id="moodTodayDate"></time></div>
+          <fieldset class="mood-options"><legend>Qual opção se aproxima mais do que você sente?</legend>
+            <label><input type="radio" name="dailyMood" value="Muito bem" required><span><i aria-hidden="true">😄</i><b>Muito bem</b><small>leve e contente</small></span></label>
+            <label><input type="radio" name="dailyMood" value="Bem"><span><i aria-hidden="true">🙂</i><b>Bem</b><small>estou bem</small></span></label>
+            <label><input type="radio" name="dailyMood" value="Neutro"><span><i aria-hidden="true">😐</i><b>Neutro</b><small>sem algo marcante</small></span></label>
+            <label><input type="radio" name="dailyMood" value="Triste"><span><i aria-hidden="true">😔</i><b>Triste</b><small>um dia mais difícil</small></span></label>
+            <label><input type="radio" name="dailyMood" value="Ansioso ou estressado"><span><i aria-hidden="true">😟</i><b>Ansioso ou estressado</b><small>com tensão ou preocupação</small></span></label>
+          </fieldset>
+          <fieldset class="mood-detail-group"><legend>Quais emoções estão presentes? <small>Você pode escolher mais de uma</small></legend><div class="mood-emotion-options">
+            <label><input type="checkbox" name="emotions" value="Calma"><span>😌 Calma</span></label><label><input type="checkbox" name="emotions" value="Alegria"><span>😊 Alegria</span></label><label><input type="checkbox" name="emotions" value="Gratidão"><span>💛 Gratidão</span></label><label><input type="checkbox" name="emotions" value="Esperança"><span>🌱 Esperança</span></label><label><input type="checkbox" name="emotions" value="Preocupação"><span>💭 Preocupação</span></label><label><input type="checkbox" name="emotions" value="Irritação"><span>😣 Irritação</span></label><label><input type="checkbox" name="emotions" value="Solidão"><span>🌧️ Solidão</span></label><label><input type="checkbox" name="emotions" value="Cansaço"><span>😴 Cansaço</span></label>
+          </div></fieldset>
+          <div class="mood-scales">
+            <div class="mood-scale"><label for="moodStress">Estresse percebido <output id="moodStressValue" for="moodStress">3 de 5</output></label><input id="moodStress" name="stress" type="range" min="1" max="5" value="3"><div class="scale-captions"><span>Tranquilo</span><span>Elevado</span></div></div>
+            <div class="mood-scale"><label for="moodSleep">Como foi seu sono?</label><select id="moodSleep" name="sleep"><option value="">Prefiro não responder</option><option value="1">Muito ruim</option><option value="2">Ruim</option><option value="3">Regular</option><option value="4">Bom</option><option value="5">Muito bom</option></select></div>
+          </div>
+          <section class="thought-record" aria-labelledby="thoughtRecordTitle"><div class="thought-record-heading"><span aria-hidden="true">✦</span><div><h3 id="thoughtRecordTitle">Entenda esse momento</h3><p>Se quiser, registre o que aconteceu e como isso repercutiu em você.</p></div></div>
+            <label for="moodNote">1. O que estava acontecendo?</label><textarea id="moodNote" name="note" rows="2" maxlength="180" placeholder="Descreva a situação, sem julgamento..."></textarea>
+            <label for="moodThought">2. O que passou pela sua cabeça?</label><textarea id="moodThought" rows="2" maxlength="100" placeholder="Quais pensamentos ou interpretações surgiram?"></textarea>
+            <label for="moodReaction">3. Como você reagiu?</label><textarea id="moodReaction" rows="2" maxlength="100" placeholder="Pode incluir emoções, sensações no corpo ou o que você fez."></textarea>
+          </section>
+          <label for="moodEnergy">Como está sua energia hoje?</label><select id="moodEnergy" name="energy"><option>Baixa</option><option selected>Moderada</option><option>Boa</option></select>
+          <label for="moodHelp">O que poderia ajudar neste momento? (opcional)</label><textarea id="moodHelp" name="help" rows="2" maxlength="300" placeholder="Uma pequena coisa que faria diferença..."></textarea>
+          <button class="primary-btn mood-save-btn" type="submit"><span aria-hidden="true">✓</span> Salvar registro de hoje</button>
+          <p id="moodPrivacy" class="privacy-note">Você pode atualizar o registro de hoje. Os dados ficam apenas neste navegador.</p>
+        </form>
+        <div class="progress-card mood-history-card"><h3>Últimos sete dias</h3><p id="weeklySummary" class="weekly-summary" aria-live="polite"></p><div id="moodChart" class="mood-chart" role="img" aria-label="Distribuição dos registros de humor"></div><h3>Histórico</h3><div id="moodHistory" class="history-list" aria-live="polite"></div></div>
+      </div>
+    </section>
+
+    <section id="autocuidado" class="section soft tool-view" data-tool-view="autocuidado" aria-labelledby="selfCareTitle" hidden><button class="secondary-btn tool-back" type="button" data-back-tools>← Voltar para ferramentas</button><div class="section-heading"><span class="eyebrow">PEQUENOS CUIDADOS</span><h2 id="selfCareTitle">O que seria bom para você hoje?</h2><p id="selfCareProgress" aria-live="polite">Escolha apenas o que fizer sentido. Descansar também é cuidar de si.</p><div id="selfCareProgressBar" class="self-care-progress" role="progressbar" aria-label="Atividades de autocuidado concluídas" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0"><span id="selfCareProgressFill"></span></div></div><div class="self-care-note"><span aria-hidden="true">♡</span><p>Escolha o que combina com o seu momento. Não é uma lista de tarefas, e você pode parar quando quiser.</p></div><div id="selfCareList" class="self-care-list"></div></section>
+
+    <section id="respiracao" class="section tool-view" data-tool-view="respiracao" aria-labelledby="breathingTitle" hidden><button class="secondary-btn tool-back" type="button" data-back-tools>← Voltar para ferramentas</button><div class="section-heading"><span class="eyebrow">PAUSA CONSCIENTE</span><h2 id="breathingTitle">Respire no seu ritmo.</h2><p>Acompanhe o círculo sem forçar a respiração. Volte ao ritmo normal ou encerre se sentir desconforto. O exercício é um recurso de bem-estar e não substitui atendimento profissional.</p></div><div class="breathing-card"><div id="breathingCircle" class="breathing-circle" aria-hidden="true"><span id="breathingCue">Quando quiser, comece</span></div><p id="breathingStatus" aria-live="polite">Inspire suavemente por 4 segundos e expire por 6. Não é necessário prender a respiração. O som é opcional e começa desligado.</p><div class="breathing-audio"><label class="setting sound-setting" for="breathingSound"><span>Som suave de orientação (desligado por padrão)</span><input id="breathingSound" type="checkbox"><i></i></label><label for="breathingVolume">Volume do som <output id="breathingVolumeValue">12%</output></label><input id="breathingVolume" type="range" min="0" max="30" value="12" disabled><span class="privacy-note">O som é sintetizado pelo aparelho, sem baixar arquivos de áudio.</span></div><div class="breathing-controls"><label for="breathingDuration">Duração</label><select id="breathingDuration"><option value="1">1 minuto</option><option value="2" selected>2 minutos</option><option value="3">3 minutos</option><option value="5">5 minutos</option></select><button id="breathingStart" class="primary-btn" type="button">Iniciar</button><button id="breathingPause" class="secondary-btn" type="button" disabled>Pausar</button><button id="breathingStop" class="secondary-btn" type="button" disabled>Encerrar</button></div></div></section>
+
+    <section id="metas" class="section soft tool-view" data-tool-view="metas" aria-labelledby="goalsTitle" hidden><button class="secondary-btn tool-back" type="button" data-back-tools>← Voltar para ferramentas</button><div class="section-heading"><span class="eyebrow">NO SEU TEMPO</span><h2 id="goalsTitle">Metas pessoais</h2><p>Metas são convites, não cobranças. Você pode mudar de ideia a qualquer momento.</p></div><div class="goals-layout"><form id="goalForm" class="diary-box"><label for="goalTitle">O que você gostaria de fazer?</label><input id="goalTitle" maxlength="100" required placeholder="Ex.: caminhar por alguns minutos"><label for="goalDescription">Descrição (opcional)</label><textarea id="goalDescription" rows="3" maxlength="500" placeholder="Uma meta pequena e possível para você..."></textarea><label for="goalDate">Data (opcional)</label><input id="goalDate" type="date"><button class="primary-btn" type="submit">Adicionar meta</button></form><div class="entries-box"><h3>Minhas metas</h3><div id="goalsList" class="entries-list" aria-live="polite"></div></div></div></section>
+    </div>
+
+    <!-- CONFIGURAÇÕES -->
+    <div id="pagina-configuracoes" class="tab-page" role="tabpanel" aria-labelledby="tab-configuracoes" data-page="configuracoes" tabindex="0" hidden>
+    <section id="configuracoes" class="section soft">
+      <div class="section-heading">
+        <span class="eyebrow">CONFIGURAÇÕES</span>
+        <h2>Deixe o PsychoHealth do seu jeito.</h2>
+      </div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3>Preferências</h3>
+          <label class="setting"><span>Modo escuro</span><input id="darkToggle" type="checkbox"><i></i></label>
+          <label for="appLanguage">Idioma do aplicativo</label>
+          <select id="appLanguage" aria-describedby="languageHelp"><option value="pt-BR">Português (Brasil)</option><option value="en">English</option><option value="es">Español</option></select>
+          <p id="languageHelp" class="privacy-note">Altera o idioma da navegação e das configurações principais.</p>
+          <label class="setting"><span>Lembrete diário de humor</span><input id="reminderToggle" type="checkbox"><i></i></label>
+          <p class="privacy-note">A notificação é local e usa o horário deste celular. Se o horário escolhido cair no período silencioso, ela será enviada ao final desse período. Disponível no app Android; a economia de bateria pode causar pequeno atraso.</p>
+          <div class="reminder-options">
+            <label for="reminderTime">Horário diário</label><input id="reminderTime" type="time" value="19:00">
+            <label for="quietStart">Início do período silencioso</label><input id="quietStart" type="time" value="22:00">
+            <label for="quietEnd">Fim do período silencioso</label><input id="quietEnd" type="time" value="07:00">
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3>Acessibilidade</h3>
+          <label class="setting"><span>Texto ampliado</span><input id="fontToggle" type="checkbox"><i></i></label>
+          <label class="setting"><span>Alto contraste</span><input id="contrastToggle" type="checkbox"><i></i></label>
+          <label class="setting"><span>Reduzir animações e movimento</span><input id="motionToggle" type="checkbox"><i></i></label>
+          <p class="privacy-note">Essas preferências são aplicadas a toda a interface e ficam salvas neste navegador.</p>
+        </div>
+        <div class="settings-card">
+          <h3>Dados e privacidade</h3>
+          <p>Perfil, diário, humor, autocuidado, metas, agenda e conversas da conta ficam no banco SQLite deste servidor local. A senha é armazenada como hash; as configurações visuais ficam neste navegador.</p>
+          <p>Use a exportação para baixar uma cópia dos dados da sua conta. “Apagar cópias” remove apenas dados locais deste navegador; isso não exclui os dados da conta no servidor.</p>
+          <div class="privacy-actions"><button id="exportData" class="outline-btn" type="button">Exportar meus dados (JSON)</button><button id="deleteData" class="danger-btn" type="button">Apagar cópias deste navegador</button></div>
+          <p id="privacyStatus" class="privacy-note" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+    </div>
+  </main>
+
+  <!-- Botão SOS informativo; não inicia chamadas nem abre aplicativos externos. -->
+  <button id="panicBtn" class="panic-btn" aria-label="Exibir aviso demonstrativo do botão SOS">SOS</button>
+
+  <!-- Rodapé -->
+  <footer>
+    <div class="footer-brand"><img class="brand-symbol" src="assets/logo_lighttheme-removebg-preview.png" alt=""><b>PsychoHealth</b></div>
+    <p>Projeto acadêmico demonstrativo. Informações e perfis fictícios não representam profissionais reais.</p>
+    <div class="footer-links"><a href="#inicio">Início</a><a href="#configuracoes">Privacidade</a><a href="#configuracoes">Acessibilidade</a></div>
+  </footer>
+
+  <!-- Modal reutilizável para login, avaliações, profissionais e alertas -->
+  <div id="modalOverlay" class="modal-overlay" aria-hidden="true">
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button id="closeModal" class="close-modal" aria-label="Fechar janela">×</button>
+      <div id="modalIcon" class="modal-icon">Ψ</div>
+      <h2 id="modalTitle">PsychoHealth</h2>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="api-client.js"></script>
+  <script src="script.js"></script>
+  <script src="translations-full.js"></script>
+  <script src="tools.js"></script>
+</body>
+</html>
