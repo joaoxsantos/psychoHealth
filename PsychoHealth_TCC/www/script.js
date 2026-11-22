@@ -55,6 +55,7 @@ function openTool(name) {
   if (!isAuthenticated) { showAuthGate(); return; }
   const view = document.querySelector('[data-tool-view="' + name + '"]');
   if (!view) return;
+  activateTab("ferramentas");
   $("#ferramentas").hidden = true;
   $$("#pagina-ferramentas [data-tool-view]").forEach(tool => { tool.hidden = tool !== view; });
   view.querySelector("[data-back-tools]")?.focus({ preventScroll: true });
